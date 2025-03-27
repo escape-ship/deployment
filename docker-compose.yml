@@ -1,13 +1,13 @@
 services:
-  mysql:
-    image: mysql:latest
-    container_name: mysql
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
     env_file:
       - envs/database.env
     ports:
-      - 3306:3306
+      - 5432:5432
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 30s
       timeout: 10s
       retries: 5

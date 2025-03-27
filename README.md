@@ -3,10 +3,9 @@
 ## envs/database.env
 
 ```
-MYSQL_ROOT_PASSWORD=test123
-MYSQL_DATABASE=escape
-MYSQL_USER=testuser
-MYSQL_PASSWORD=testpassword
+POSTGRES_USER=testuser
+POSTGRES_PASSWORD=testpasswd
+POSTGRES_DB=escape
 ```
 
 ## envs/kafka.env
