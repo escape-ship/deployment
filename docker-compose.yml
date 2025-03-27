@@ -20,6 +20,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       <<: *healthcheck-defaults
+    networks:
+      - postgres-network
   redis:
     image: redis:alpine
     container_name: redis
@@ -45,6 +47,9 @@ services:
       - kafka-network
 
 networks:
+  postgres-network:
+    name: postgres-network
+    driver: bridge
   redis-network:
     name: redis-network
     driver: bridge
