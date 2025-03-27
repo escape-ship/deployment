@@ -1,3 +1,12 @@
+x-common-env: &common-env
+  TZ: Asia/Seoul
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 30s
+
 services:
   postgres:
     image: postgres:alpine
@@ -6,23 +15,23 @@ services:
       - envs/database.env
     ports:
       - 5432:5432
+    environment:
+      <<: *common-env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      <<: *healthcheck-defaults
   redis:
     image: redis:alpine
     container_name: redis
     ports:
       - 6379:6379
+    environment:
+      <<: *common-env
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      <<: *healthcheck-defaults
+    networks:
+      - redis-network
   kafka:
     image: apache/kafka-native:latest
     container_name: kafka
@@ -30,14 +39,15 @@ services:
       - envs/kafka.env
     ports:
       - 9092:9092
-  kafka-ui:
-    image: kafbat/kafka-ui:main
-    container_name: kafka-ui
-    ports:
-      - 8080:8080
     environment:
-      DYNAMIC_CONFIG_ENABLED: "true"
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
-    depends_on:
-    - kafka
+      <<: *common-env
+    networks:
+      - kafka-network
+
+networks:
+  redis-network:
+    name: redis-network
+    driver: bridge
+  kafka-network:
+    name: kafka-network
+    driver: bridge
