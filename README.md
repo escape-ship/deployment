@@ -4,7 +4,7 @@
 
 ```
 POSTGRES_USER=testuser
-POSTGRES_PASSWORD=testpasswd
+POSTGRES_PASSWORD=testpassword
 POSTGRES_DB=escape
 ```
 
