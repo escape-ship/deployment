@@ -46,6 +46,101 @@ services:
     networks:
       - kafka-network
 
+  # Application Services
+  ui_test:
+    image: ghcr.io/escape-ship/ui_test:latest
+    container_name: ui_test
+    ports:
+      - 3000:3000
+    environment:
+      <<: *common-env
+      NODE_ENV: production
+      BACKEND_URL: http://gatewaysrv:8080
+    depends_on:
+      - gatewaysrv
+    networks:
+      - app-network
+
+  gatewaysrv:
+    image: ghcr.io/escape-ship/gatewaysrv:latest
+    container_name: gatewaysrv
+    ports:
+      - 8080:8080
+    environment:
+      <<: *common-env
+    depends_on:
+      - accountsrv
+      - productsrv
+      - ordersrv
+      - paymentsrv
+    networks:
+      - app-network
+
+  accountsrv:
+    image: ghcr.io/escape-ship/accountsrv:latest
+    container_name: accountsrv
+    ports:
+      - 8081:8081
+    environment:
+      <<: *common-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+      - postgres-network
+      - redis-network
+
+  productsrv:
+    image: ghcr.io/escape-ship/productsrv:latest
+    container_name: productsrv
+    ports:
+      - 8082:8082
+    environment:
+      <<: *common-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - app-network
+      - postgres-network
+      - kafka-network
+
+  ordersrv:
+    image: ghcr.io/escape-ship/ordersrv:latest
+    container_name: ordersrv
+    ports:
+      - 8083:8083
+    environment:
+      <<: *common-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+      - postgres-network
+
+  paymentsrv:
+    image: ghcr.io/escape-ship/paymentsrv:latest
+    container_name: paymentsrv
+    ports:
+      - 8084:8084
+    environment:
+      <<: *common-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - app-network
+      - postgres-network
+      - kafka-network
+
 networks:
   postgres-network:
     name: postgres-network
@@ -55,4 +150,7 @@ networks:
     driver: bridge
   kafka-network:
     name: kafka-network
+    driver: bridge
+  app-network:
+    name: app-network
     driver: bridge
