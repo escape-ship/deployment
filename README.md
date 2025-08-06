@@ -28,3 +28,8 @@ KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
 # Required for a single node cluster
 KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 ```
+
+## envs/.jwt.env
+```
+GATEWAY_AUTH_JWT_SECRET=ahZtmgwkbEz3qhPWkcdaxb4QuvS0e5APlWif9sEHysik
+```
